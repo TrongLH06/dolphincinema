@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: dolphincinema
+    runtime: node
+    buildCommand: ""
+    startCommand: "node server.js"
+    plan: free
+    envVars:
+      - key: PORT
+        value: 10000

@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🐬 DOLPHIN CINEMA — dolphincinema.com | Rạp Chiếu Phim &amp; Nghe Nhạc Trực Tuyến</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/cinema.css" />
+</head>
+<body>
+  <!-- ================= HEADER / THANH ĐIỀU HƯỚNG RẠP ================= -->
+  <header class="cinema-header">
+    <div class="header-brand">
+      <div class="brand-logo" aria-hidden="true">🐬</div>
+      <div class="brand-text">
+        <h1 class="brand-title">DOLPHIN CINEMA — dolphincinema.com</h1>
+        <div class="brand-badges">
+          <span id="syncStatusBadge" class="status-badge status-live" role="status">
+            🟢 Đang đồng bộ Live (LAN / Multi-Tab)
+          </span>
+          <span id="onlineCount" class="status-badge status-online" aria-live="polite">
+            1 khán giả
+          </span>
+          <span id="currentSeatBadge" class="status-badge status-seat">
+            Chưa chọn ghế
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="header-actions" role="toolbar" aria-label="Điều khiển nhanh rạp chiếu">
+      <button type="button" id="openProfileBtn" class="header-btn btn-profile" title="Đổi tên hiển thị và ảnh đại diện">
+        👤 <span>Đổi Tên / Avatar</span>
+      </button>
+      <button type="button" id="toggleHostPanelBtn" class="header-btn btn-host" aria-expanded="true" aria-controls="hostControlPanel">
+        👑 <span>Bảng Điều Khiển Chủ Rạp (Host)</span>
+      </button>
+      <button type="button" id="toggleLightsBtn" class="header-btn btn-lights" aria-pressed="false">
+        💡 <span>Tắt đèn rạp</span>
+      </button>
+      <button type="button" id="toggleCurtainBtn" class="header-btn btn-curtain" aria-pressed="true">
+        🎭 <span>Đóng/Mở Rèm</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ================= BẢNG ĐIỀU KHIỂN CHỦ RẠP (HOST PANEL) ================= -->
+  <section id="hostControlPanel" class="host-panel" aria-label="Bảng Điều Khiển Chủ Rạp">
+    <div class="host-panel-inner">
+      <!-- Hàng 1: Chọn nguồn phát nhanh & Nhập link tùy chọn -->
+      <div class="host-source-grid">
+        <div class="host-field-group preset-group">
+          <label for="presetMediaSelect" class="host-label">🎞️ Danh sách Phim &amp; Nhạc chọn nhanh (Quick Playlist):</label>
+          <div class="Quick-playlist-row">
+            <select id="presetMediaSelect" class="cinema-select">
+              <option value="builtin:kiem-tam-do-kiep">⚔️ [Phim Tiên Hiệp] Kiếm Tâm Độ Kiếp — The Tribulation of Sword Heart (Built-in Cinema)</option>
+              <option value="builtin:galloping-gertie">🌉 [Phim Tài Liệu] Cây Cầu Biết Nhảy Múa — Galloping Gertie 1940 (Built-in Cinema)</option>
+              <option value="builtin:lofi-music">🎵 [Nhạc Lofi &amp; Chill] Đêm Nhạc Rạp Phim — Synthwave &amp; Chillhop Live</option>
+              <option value="mp4:https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4">🎬 [Video Mẫu MP4] Big Buck Bunny / Sintel Open Movie</option>
+            </select>
+            <div class="preset-quick-pills" role="group" aria-label="Phím tắt chọn nguồn nhanh">
+              <button type="button" class="preset-pill active" data-preset="builtin:kiem-tam-do-kiep">⚔️ Kiếm Tâm Độ Kiếp</button>
+              <button type="button" class="preset-pill" data-preset="builtin:galloping-gertie">🌉 Cầu Galloping Gertie</button>
+              <button type="button" class="preset-pill" data-preset="builtin:lofi-music">🎵 Đêm Nhạc Lofi</button>
+              <button type="button" class="preset-pill" data-preset="mp4:https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4">🎬 Big Buck Bunny</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="host-field-group custom-url-group">
+          <label for="mediaUrlInput" class="host-label">🔗 Hoặc phát từ Link (YouTube / MP4 / WebM / MP3) &amp; File máy tính:</label>
+          <div class="custom-media-inputs">
+            <input
+              type="url"
+              id="mediaUrlInput"
+              class="cinema-input input-url"
+              placeholder="Dán link YouTube (youtube.com/watch?v=..., youtu.be/...) hoặc .mp4, .webm, .mp3..."
+              autocomplete="off"
+            />
+            <input
+              type="text"
+              id="mediaTitleInput"
+              class="cinema-input input-title"
+              placeholder="Tên phim / bài hát hiển thị..."
+              maxlength="80"
+              autocomplete="off"
+            />
+            <button type="button" id="loadMediaBtn" class="host-action-btn btn-primary-gold">
+              ▶️ Phát Lên Màn Chiếu
+            </button>
+            <label for="localFileInput" class="host-action-btn btn-local-file" tabindex="0" role="button">
+              📂 Mở File Máy Tính
+            </label>
+            <input
+              type="file"
+              id="localFileInput"
+              accept="video/*,audio/*,.mp4,.webm,.ogg,.mp3,.wav"
+              hidden
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Hàng 2: Cụm điều khiển đồng bộ phát sóng của Chủ rạp -->
+      <div class="host-transport-bar">
+        <div class="transport-buttons">
+          <button type="button" id="hostPlayPauseBtn" class="transport-btn btn-play-pause">
+            ⏯️ Phát / Tạm dừng
+          </button>
+          <button type="button" id="hostRewindBtn" class="transport-btn" title="Tua lùi 10 giây">
+            ⏪ -10s
+          </button>
+          <button type="button" id="hostForwardBtn" class="transport-btn" title="Tua tới 10 giây">
+            ⏩ +10s
+          </button>
+          <button type="button" id="soundToggleBtn" class="transport-btn" title="Bật/Tắt tiếng nhạc nền & hiệu ứng âm thanh">
+            🔊 Âm thanh: Bật
+          </button>
+        </div>
+
+        <div class="transport-timeline">
+          <input
+            type="range"
+            id="hostSeekSlider"
+            class="cinema-slider seek-slider"
+            min="0"
+            max="100"
+            value="0"
+            step="0.1"
+            aria-label="Thanh tua thời gian"
+          />
+          <span id="mediaTimeLabel" class="media-time-label">00:00 / 00:00</span>
+        </div>
+
+        <div class="transport-Right">
+          <div class="volume-control" title="Chỉnh âm lượng rạp">
+            <span class="volume-icon" aria-hidden="true">🎚️</span>
+            <input
+              type="range"
+              id="volumeSlider"
+              class="cinema-slider volume-slider"
+              min="0"
+              max="1"
+              step="0.02"
+              value="0.8"
+              aria-label="Âm lượng"
+            />
+          </div>
+          <button type="button" id="forceSyncBtn" class="transport-btn btn-force-sync">
+            🔄 Đồng bộ tất cả khán giả ngay
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= BỐ CỤC CHÍNH 2 CỘT (MAIN CINEMA LAYOUT) ================= -->
+  <main class="cinema-layout">
+    <!-- CỘT TRÁI: KHÁN ĐÀI & MÀN CHIẾU ĐẠI TƯ LIỆU -->
+    <div class="theater-hall">
+      <!-- 1. Khung Màn Chiếu Đại Tư Liệu -->
+      <div class="screen-stage-wrapper">
+        <!-- Hiệu ứng đèn viền Ambilight tỏa sáng phía sau màn hình -->
+        <div id="ambilightGlow" class="ambilight-glow" aria-hidden="true"></div>
+
+        <!-- Khung màn hình chính 16:9 -->
+        <div id="cinemaViewport" class="cinema-screen curtains-open">
+          <!-- Rèm nhung đỏ 2 bên -->
+          <div id="curtainLeft" class="curtain curtain-left open" aria-hidden="true">
+            <div class="curtain-drape"></div>
+          </div>
+          <div id="curtainRight" class="curtain curtain-right open" aria-hidden="true">
+            <div class="curtain-drape"></div>
+          </div>
+
+          <!-- Các lớp trình phát bên trong màn hình -->
+          <video id="html5VideoPlayer" playsinline crossorigin="anonymous"></video>
+          <div id="youtubePlayerContainer" class="yt-container"></div>
+          <canvas id="builtinCinemaCanvas" class="active" width="1280" height="720"></canvas>
+
+          <!-- Lớp phủ thông tin bài hát/phim đang phát -->
+          <div id="nowPlayingBanner" class="now-playing-banner" aria-live="polite">
+            <div class="now-playing-badge">🔴 ĐANG CHIẾU</div>
+            <div class="now-playing-info">
+              <div id="nowPlayingTitle" class="now-playing-title">
+                ⚔️ Kiếm Tâm Độ Kiếp — The Tribulation of Sword Heart
+              </div>
+              <div id="nowPlayingStatus" class="now-playing-status">
+                Đang phát đồng bộ trực tuyến...
+              </div>
+            </div>
+          </div>
+
+          <!-- Lớp hiệu ứng Emoji bay lên màn hình -->
+          <div id="screenReactionLayer" class="screen-reaction-layer" aria-hidden="true"></div>
+        </div>
+
+        <!-- Thanh cong ánh sáng sàn sân khấu -->
+        <div class="stage-floor-reflection" aria-hidden="true">
+          <span class="screen-direction-label">MÀN CHIẾU IMAX • DOLPHINCINEMA.COM</span>
+        </div>
+      </div>
+
+      <!-- 2. Khu vực Ghế Ngồi Trong Rạp -->
+      <div class="seating-auditorium">
+        <div class="auditorium-header">
+          <p class="auditorium-guide">
+            👆 Bấm vào ghế trống bất kỳ để ngồi. Khi bạn chat hoặc thả cảm xúc, bong bóng sẽ hiện lên ngay trên ghế của bạn!
+          </p>
+          <div class="seat-legend" aria-label="Chú thích màu ghế">
+            <span class="legend-item"><i class="legend-swatch swatch-standard"></i> Ghế Thường Hạng A</span>
+            <span class="legend-item"><i class="legend-swatch swatch-vip"></i> Ghế VIP Hạng B-C</span>
+            <span class="legend-item"><i class="legend-swatch swatch-sweetbox"></i> Ghế Đôi Sweetbox Hạng D</span>
+            <span class="legend-item"><i class="legend-swatch swatch-mine"></i> Ghế Của Bạn</span>
+            <span class="legend-item"><i class="legend-swatch swatch-occupied"></i> Có Người Ngồi</span>
+          </div>
+        </div>
+
+        <!-- Lối đi & Grid ghế ngồi (được app.js render động A1..A6, B1..B6, C1..C6, D1..D3) -->
+        <div class="auditorium-aisle-wrap">
+          <div id="seatingGrid" class="seating-grid" role="region" aria-label="Sơ đồ ghế ngồi trong rạp"></div>
+        </div>
+      </div>
+
+      <!-- 3. Thanh Thả Cảm Xúc Nhanh -->
+      <div class="quick-reaction-bar" role="group" aria-label="Thanh thả cảm xúc nhanh">
+        <span class="reaction-bar-label">✨ Thả cảm xúc lên màn hình &amp; ghế ngồi:</span>
+        <div class="reaction-buttons-wrap">
+          <button type="button" class="reaction-btn" data-emoji="🍿">🍿 <span>Bỏng ngô</span></button>
+          <button type="button" class="reaction-btn" data-emoji="❤️">❤️ <span>Thả tim</span></button>
+          <button type="button" class="reaction-btn" data-emoji="😂">😂 <span>Haha</span></button>
+          <button type="button" class="reaction-btn" data-emoji="🔥">🔥 <span>Cháy quá</span></button>
+          <button type="button" class="reaction-btn" data-emoji="👏">👏 <span>Vỗ tay</span></button>
+          <button type="button" class="reaction-btn" data-emoji="🥂">🥂 <span>Cụm ly</span></button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CỘT PHẢI: DANH SÁCH KHÁN GIẢ & KHUNG CHAT TRỰC TUYẾN -->
+    <aside class="chat-sidebar" aria-label="Khán giả và trò chuyện trực tuyến">
+      <!-- Danh sách Khán giả đang trong rạp -->
+      <div class="audience-panel">
+        <div class="panel-header">
+          <h2 class="panel-title">👥 Khán giả trong rạp</h2>
+        </div>
+        <div id="audienceList" class="audience-list" role="list"></div>
+      </div>
+
+      <!-- Khung Chat Trực Tuyến -->
+      <div class="chat-panel">
+        <div class="panel-header">
+          <h2 class="panel-title">💬 Trò chuyện trực tuyến</h2>
+          <span class="chat-subtitle">Tin nhắn hiện cả trên ghế ngồi</span>
+        </div>
+
+        <div id="chatMessages" class="chat-messages" role="log" aria-live="polite">
+          <div class="chat-system-msg">
+            🎉 Chào mừng bạn đến với <strong>dolphincinema.com</strong>! Hãy chọn một chiếc ghế êm ái và thưởng thức phim/nhạc cùng mọi người.
+          </div>
+        </div>
+
+        <form id="chatForm" class="chat-input-area">
+          <input
+            type="text"
+            id="chatInput"
+            class="chat-input"
+            placeholder="Nhập tin nhắn trò chuyện cùng mọi người..."
+            maxlength="240"
+            autocomplete="off"
+            aria-label="Nội dung tin nhắn"
+          />
+          <button type="submit" id="sendChatBtn" class="send-chat-btn">
+            Gửi 🚀
+          </button>
+        </form>
+      </div>
+    </aside>
+  </main>
+
+  <!-- ================= MODAL CHỌN TÊN & AVATAR KHÁN GIẢ ================= -->
+  <div id="profileModal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="profileModalTitle" hidden>
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-ticket-badge">🎟️ VÉ VÀO CỬA DOLPHINCINEMA.COM</div>
+        <h2 id="profileModalTitle" class="modal-title">Hồ Sơ Khán Giả &amp; Vai Trò</h2>
+        <p class="modal-desc">Chọn tên hiển thị và biểu tượng đại diện của bạn trên ghế rạp dolphincinema.com.</p>
+      </div>
+
+      <div class="modal-body">
+        <div class="modal-field">
+          <label for="nicknameInput" class="modal-label">🏷️ Tên hiển thị của bạn (tối đa 24 ký tự):</label>
+          <input
+            type="text"
+            id="nicknameInput"
+            class="cinema-input modal-input"
+            maxlength="24"
+            value="Khán Giả Bí Ẩn"
+            placeholder="Nhập biệt danh của bạn..."
+            autocomplete="off"
+          />
+        </div>
+
+        <div class="modal-field">
+          <label class="modal-label">🎭 Chọn Avatar đại diện:</label>
+          <div id="avatarPickerGrid" class="avatar-picker-grid" role="radiogroup" aria-label="Chọn Avatar">
+            <button type="button" class="avatar-option selected" data-avatar="😎" aria-checked="true" role="radio">😎</button>
+            <button type="button" class="avatar-option" data-avatar="🦊" aria-checked="false" role="radio">🦊</button>
+            <button type="button" class="avatar-option" data-avatar="🐱" aria-checked="false" role="radio">🐱</button>
+            <button type="button" class="avatar-option" data-avatar="🐼" aria-checked="false" role="radio">🐼</button>
+            <button type="button" class="avatar-option" data-avatar="🦁" aria-checked="false" role="radio">🦁</button>
+            <button type="button" class="avatar-option" data-avatar="🐸" aria-checked="false" role="radio">🐸</button>
+            <button type="button" class="avatar-option" data-avatar="🦄" aria-checked="false" role="radio">🦄</button>
+            <button type="button" class="avatar-option" data-avatar="👻" aria-checked="false" role="radio">👻</button>
+            <button type="button" class="avatar-option" data-avatar="🤖" aria-checked="false" role="radio">🤖</button>
+            <button type="button" class="avatar-option" data-avatar="👑" aria-checked="false" role="radio">👑</button>
+          </div>
+        </div>
+
+        <div class="modal-field role-toggle-field">
+          <label for="isHostCheckbox" class="role-toggle-label">
+            <input type="checkbox" id="isHostCheckbox" class="role-checkbox" checked />
+            <span class="role-toggle-switch" aria-hidden="true"></span>
+            <span class="role-toggle-text">
+              <strong>👑 Chủ rạp (Host)</strong> — Cho phép điều khiển đổi phim/nhạc &amp; tua đồng bộ cho cả rạp
+              <small>(Bỏ chọn nếu bạn chỉ muốn ngồi xem với tư cách 🍿 Khán giả)</small>
+            </span>
+          </label>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" id="saveProfileBtn" class="btn-enter-cinema">
+          🎟️ Vào Rạp Ngay
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= SCRIPTS HỆ THỐNG ================= -->
+  <script src="js/sync-engine.js"></script>
+  <script src="js/player-controller.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

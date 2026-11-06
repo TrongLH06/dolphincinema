@@ -1,0 +1,23 @@
+{
+  "name": "dolphincinema-com",
+  "version": "1.0.0",
+  "description": "DOLPHINCINEMA.COM — Online Watch Party & Interactive Cinema Auditorium",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "tunnel": "npx cloudflared tunnel --url http://localhost:8090"
+  },
+  "keywords": [
+    "cinema",
+    "dolphincinema",
+    "watch-party",
+    "realtime",
+    "sse",
+    "multiplayer"
+  ],
+  "author": "Dolphin Cinema Studio",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
